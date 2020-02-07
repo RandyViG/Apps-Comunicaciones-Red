@@ -7,7 +7,7 @@ public class SHMD{
             int pto = 5000;
             DatagramSocket s = new DatagramSocket(pto);
             s.setReuseAddress(true);
-            System.out.println("Servidor iniciado en el pto: " + pto + " escuchando nombres...");
+            System.out.println("Servidor iniciado en el pto: " + pto + " escuchando paquetes...");
             for(;;){
                 DatagramPacket p = new DatagramPacket(new byte[65500], 65500);
                 s.receive(p);
