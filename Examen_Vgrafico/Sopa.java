@@ -26,7 +26,7 @@ public class Sopa extends javax.swing.JFrame {
         initComponents();
         palabra = new JLabel[]{p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15};
         for (int i = 0; i < 15; i++)
-            palabra[i].setText(palabrasS[0][i]);
+            palabra[i].setText(palabrasS[1][i]);
         this.setLocationRelativeTo(null);
         cargar();
         palabras = new String[15];

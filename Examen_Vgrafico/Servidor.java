@@ -18,10 +18,10 @@ public class Servidor {
             for(;;){
                 Socket cl = s.accept();
                 ObjectOutputStream oos = new ObjectOutputStream( cl.getOutputStream() );
-                /*String[][] palabras = { {"maestro", "alumno", "lapiz", "lapicero", "cuaderno", "crayon", "computadora", "goma",
-				"gis", "regla", "compas", "libro", "colores", "tijeras", "pizarron"},{},{}};*/
-                String[][] palabras = { {"maestro", "alumno", "lapiz", "lapicero", "cuaderno", "crayon", "computadora", "goma",
-				"gis", "regla", "compas", "libro", "colores", "tijeras", "pizarron"}, {}};
+                String [][] palabras = {
+                    {"maestro", "alumno", "plumon", "lapicero", "cuaderno", "prefecto", "salon", "goma","escuadra", "regla", "compas", "libro", "colores", "tijeras", "lapicera"},
+                    {"traemos", "maulon", "pulmon","copiarle", "educaron", "perfecto", "lonas", "mago", "acuerdas", "glera", "campos", "birlo", "coserlo", "tirajes", "aplicare"}
+                };
                 oos.writeObject(palabras);
                 oos.flush();
                 oos.close();
