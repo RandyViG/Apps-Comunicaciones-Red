@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package practica1;
+
 import java.io.File;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,9 +8,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-
-public class Drive{
-   
+public class Drive{ 
+    
     static File file;
     static JTree tree;
     static int option;
@@ -31,7 +25,7 @@ public class Drive{
 
     public static void main( String[] args ){
         
-        path = "/home/randy/Documentos/AppsComunicacionRedes/P1/Servidor/Drive";
+        path = "DriveFiles";
         root = new DefaultMutableTreeNode("Drive");
         model = new DefaultTreeModel( root );
         tree = new JTree( root );
@@ -57,7 +51,8 @@ public class Drive{
 
                     switch( option ){
                         case 1:
-                                driveServer.uploadFile( path + "/" );
+                                String dir = driveServer.receiveFileName();
+                                driveServer.uploadFile( path + dir );
                                 root = new DefaultMutableTreeNode("Drive");
                                 model = new DefaultTreeModel( root );
                                 tree = new JTree( root );
@@ -68,11 +63,8 @@ public class Drive{
                                 driveServer.sendDirectory( client , directory );
                             break;
                         case 2: 
-                                System.out.println("reciviendo pos");
-                                String position = driveServer.receiveFileName(  );
                                 String newDirectory = driveServer.receiveFileName(  );
-                                String route = path + position;
-                                makeDirectory(route , newDirectory);
+                                makeDirectory(newDirectory);    
                                 
                                 root = new DefaultMutableTreeNode("Drive");
                                 model = new DefaultTreeModel( root );
@@ -84,12 +76,31 @@ public class Drive{
                             break;
                         case 3:
                                 fileName = driveServer.receiveFileName( );
-                                file = new File ( fileName );
-                                removeFile( file );
+                                String pathFile = path + '/' + fileName;
+                                File fileDelete = new File ( pathFile );
+                                removeFile( fileDelete );
+                                
+                                root = new DefaultMutableTreeNode("Drive");
+                                model = new DefaultTreeModel( root );
+                                tree = new JTree( root );    
+                                getPath( file , model , root );
+                                directory = new Directory( tree );
+                                client = driveServer.getSocket().accept();
+                                driveServer.sendDirectory( client , directory );
                             break;
                         case 4:
+                                System.out.println("Descargar");
                                 String fileDownload = driveServer.receiveFileName( );
-                                driveServer.getFile( client , fileDownload );
+                                String foundFile = path + "/" + fileDownload;
+                                driveServer.getFile( foundFile );
+                              
+                                root = new DefaultMutableTreeNode("Drive");
+                                model = new DefaultTreeModel( root );
+                                tree = new JTree( root );    
+                                getPath( file , model , root );
+                                directory = new Directory( tree );
+                                client = driveServer.getSocket().accept();
+                                driveServer.sendDirectory( client , directory );
                             break;
                         case 5:
                                 client.close();
@@ -108,31 +119,25 @@ public class Drive{
     }
 
     public static void getPath( File f , DefaultTreeModel model , DefaultMutableTreeNode root ){
-
         File directorys[] = f.listFiles();
-        if ( directorys != null){
-            for(int i=0; i < directorys.length ; i++ ){
-                if ( directorys[i].isDirectory() ){
-                    DefaultMutableTreeNode folder = new DefaultMutableTreeNode(directorys[i].getName());
-                    model.insertNodeInto(folder , root, i);
-                    getPath( directorys[i] , model , folder );
-                }
+        for( int i=0; i < directorys.length ; i++ ){
+            if ( directorys[i].isDirectory() ){
+                DefaultMutableTreeNode folder = new DefaultMutableTreeNode(directorys[i].getName());
+                model.insertNodeInto(folder , root , i);
+                System.out.println( "Dir --> " + directorys[i].getName());
+                getPath( directorys[i] , model , folder );
+            }
+            else{
                 DefaultMutableTreeNode folder = new DefaultMutableTreeNode(directorys[i].getName());
                 model.insertNodeInto(folder , root, i);
-                System.out.println( "--> " + directorys[i].getName());
+                System.out.println( "Archivo --> " + directorys[i].getName());
             }
-        }else{
-            DefaultMutableTreeNode folder = new DefaultMutableTreeNode(f.getName());
-            model.insertNodeInto(folder , root, 0);
-            return;
         }
-            
-
     }
 
-    public static void makeDirectory( String position , String newDirectory ){
-        File pos = new File ( position + "/" + newDirectory );
-        System.out.println("Pos: " + position);
+    public static void makeDirectory( String newDirectory ){
+        File pos = new File ( path + "/" + newDirectory );
+        System.out.println("Pos: " + path);
         System.out.println("Carpeta: " + newDirectory);
         System.out.println("Path: " + pos.getAbsolutePath());
         
@@ -148,22 +153,36 @@ public class Drive{
         }
         else
             System.out.println("El directorio ya existe");
-
     }
 
     public static void removeFile( File file  ){
-        File items[] = file.listFiles();
-        if( items != null ){
-            for(int i=0 ; i<items.length ; i++ ){
-                if( items[i].isDirectory() )
-                    removeFile( items[i] );
-                else
-                    items[i].delete();
+        System.out.println(file.getAbsolutePath());
+        if ( file.exists() ){
+            System.out.println("Archivo Encontrado");
+            if ( file.isDirectory() ){
+                System.out.println("Es carpeta");
+                File items[] = file.listFiles();
+                if( items.length < 0 ){
+                    for(int i=0 ; i<items.length ; i++ ){
+                        if( items[i].isDirectory() )
+                            removeFile( items[i] );
+                        else{
+                             items[i].delete();
+                            System.out.println("Archivo: " + file.getPath() + " borrado");
+                        }
+                           
+                    }
+                } 
+                else{
+                    file.delete();
+                    System.out.println("Carpeta: " + file.getPath() + " borrado");
+                }
             }
-        } 
-        else{
-            file.delete();
-            return;
+            else{
+                file.delete();
+                System.out.println("Archivo: " + file.getPath() + " borrado");
+            }         
         }
+        System.out.println("Archivo No existe");
     }
 }

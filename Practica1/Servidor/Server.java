@@ -1,12 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package practica1;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.ServerSocket;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Server {
     private int pto;
@@ -15,6 +12,7 @@ public class Server {
     private DataOutputStream dos;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
+    private ZipOutputStream zos;
 
     public Server( int pto ){
         this.pto = pto;
@@ -72,7 +70,7 @@ public class Server {
             String name = dis.readUTF();
             long len = dis.readLong();
             System.out.println("Preparado para recibir el archivo: " + name + "de " + len  + " bytes desde " + cl.getInetAddress() + ":" + cl.getPort() );
-            String save = path + name;
+            String save = path + "/" + name;
             this.dos = new DataOutputStream ( new FileOutputStream(save) );
             long rec = 0;
             int n = 0, porcentage = 0;
@@ -107,15 +105,30 @@ public class Server {
         return "";
     }
 
-    public void getFile( Socket cl , String file ){
+    public void getFile( String file ){
         try{
+            Socket cl = s.accept();
+            String nombre,path;
+            long len;
             File f = new File( file );
-            String fileDownload = f.getName();
-            long len = f.length();
-            String path = f.getAbsolutePath();
+            
+            if( f.isDirectory() ){
+                zos = new ZipOutputStream(new FileOutputStream( f.getName() + ".zip") ); 
+                zipDir(f.getAbsolutePath(), zos); 
+                File zipFile = new File( f.getName() + ".zip" );
+                nombre = zipFile.getName();
+                len = zipFile.length();
+                path = zipFile.getAbsolutePath();
+            }else{
+                nombre = f.getName();
+                len = f.length();
+                path = f.getAbsolutePath();
+            }
+            System.out.println("Tamaño " + len );
+            System.out.println("Ruta " + path );
             this.dos = new DataOutputStream ( cl.getOutputStream() );
             this.dis = new DataInputStream( new FileInputStream(path) );
-            dos.writeUTF(fileDownload);
+            dos.writeUTF(nombre);
             dos.flush();
             dos.writeLong(len);
             dos.flush();
@@ -126,14 +139,42 @@ public class Server {
                 n = dis.read(b);
                 dos.write(b,0,n);
                 dos.flush();
-                rec = rec +n;
+                rec = rec + n;
                 porcentage = (int ) ( (rec*100)/len );
-                System.out.print("\r enviando el "+porcentage+" % del archivo");
+                System.out.print("\renviando el "+porcentage+" % del archivo");
             }
+            System.out.println(""); 
             dis.close();
             dos.close();
+            zos.close();
         }catch( Exception e){
             e.printStackTrace();
         }
-    }   
+    }
+    
+    public void zipDir(String dir2zip, ZipOutputStream zos) { 
+	try {   
+            File zipDire = new File(dir2zip); 
+	    String[] dirList = zipDire.list(); 
+	    byte[] readBuffer = new byte[3000]; 
+	    int bytesIn = 0;  
+	    for(int i=0; i<dirList.length; i++) { 
+	        File f = new File(zipDire, dirList[i]); 
+	        if(f.isDirectory()){ 
+	            String filePath = f.getPath(); 
+	            zipDir(filePath, zos); 
+	            continue; 
+	        } 
+	        FileInputStream fis = new FileInputStream(f); 
+	        ZipEntry anEntry = new ZipEntry(f.getPath()); 
+	        zos.putNextEntry(anEntry); 
+	        while((bytesIn = fis.read(readBuffer)) != -1) { 
+	            zos.write(readBuffer, 0, bytesIn); 
+	        } 
+	        fis.close(); 
+	    } 
+	}catch(Exception e){ 
+            e.printStackTrace();
+	} 
+    }
 }
