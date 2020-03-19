@@ -37,14 +37,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Menu Principal");
 
-        jButton1.setText("SOPA_1");
+        jButton1.setText("POR DEFINICION");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("SOPA_2");
+        jButton2.setText("POR ANAGRAMA");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -84,15 +84,15 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //Sopa juegoSopa = new Sopa(String);//CONECCION
-        //juegoSopa.setVisible(true);
-        Cliente cl = new Cliente();
+        Cliente1 cl = new Cliente1();
         cl.cliente();
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        Cliente2 c2 = new Cliente2();
+        c2.cliente();
+        this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -127,8 +127,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 new MenuPrincipal().setVisible(true);
             }
         });
-        Servidor s = new Servidor();
-        s.servidor();
+        if(Boolean.TRUE){
+            //
+        }
+        Servidor1 s1 = new Servidor1();
+        //Servidor2 s2 = new Servidor2();
+        s1.servidor();
+        //s2.servidor();
         
     }
 

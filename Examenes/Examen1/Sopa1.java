@@ -2,26 +2,22 @@ import java.awt.Color;
 import java.util.Random;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
-
 /**
  *
  * @author FernandoHE
  */
-public class Sopa extends javax.swing.JFrame {
-    /**
-     * Creates new form Sopa
-     */
+public class Sopa1 extends javax.swing.JFrame {
     String palabrasS[][];
-    String palabrasS_Ana[];
     Final fin;
-    JLabel letra[][];
-    JLabel palabra[];
+    long tiempo, tFinal;
+    JLabel letra[][];//Letras en la sopa
+    JLabel palabra[];//Palabras a la derecha
     String palabras[];//las palabras en un arreglo de string
-    int iniciox[];
-    int inicioy[];
+    int iniciox[];//Coordenada X de donde inicia la palabra
+    int inicioy[];//Coordenada Y de donde inicia la palabra
     boolean gano; 
-    boolean direccion[];
-    public Sopa(String[][]pals) {
+    boolean direccion[];//TRUE = Derecha  FALSE = Izquierda
+    public Sopa1(String[][]pals) {
         palabrasS = pals;
         initComponents();
         palabra = new JLabel[]{p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15};
@@ -30,8 +26,7 @@ public class Sopa extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         cargar();
         palabras = new String[15];
-        for (int i = 0; i < letra.length; i++) {
-            //palabras[i] = palabra[i].getText();//pasa la palabra del arreglo label al al arreglo de string
+        for (int i = 0; i < 15; i++) {
             palabras[i] = palabrasS[0][i];//pasa la palabra del arreglo label al al arreglo de string
         }
     }//Sopa
@@ -75,7 +70,6 @@ public class Sopa extends javax.swing.JFrame {
 
         jLabel1.setBackground(new java.awt.Color(153, 153, 153));
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("SOPA DE LETRAS");
         jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -83,7 +77,6 @@ public class Sopa extends javax.swing.JFrame {
 
         jLabel2.setBackground(new java.awt.Color(153, 153, 153));
         jLabel2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("DATOS");
         jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -95,8 +88,8 @@ public class Sopa extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 615, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -106,7 +99,7 @@ public class Sopa extends javax.swing.JFrame {
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, -1));
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1160, -1));
 
         escritorio.setForeground(new java.awt.Color(102, 255, 255));
 
@@ -119,105 +112,90 @@ public class Sopa extends javax.swing.JFrame {
 
         p2.setBackground(new java.awt.Color(0, 153, 0));
         p2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p2.setForeground(new java.awt.Color(0, 0, 0));
         p2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p2.setOpaque(true);
 
         p1.setBackground(new java.awt.Color(0, 153, 0));
         p1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p1.setForeground(new java.awt.Color(0, 0, 0));
         p1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p1.setOpaque(true);
 
         p4.setBackground(new java.awt.Color(0, 153, 0));
         p4.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p4.setForeground(new java.awt.Color(0, 0, 0));
         p4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p4.setOpaque(true);
 
         p3.setBackground(new java.awt.Color(0, 153, 0));
         p3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p3.setForeground(new java.awt.Color(0, 0, 0));
         p3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p3.setOpaque(true);
 
         p6.setBackground(new java.awt.Color(0, 153, 0));
         p6.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p6.setForeground(new java.awt.Color(0, 0, 0));
         p6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p6.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p6.setOpaque(true);
 
         p5.setBackground(new java.awt.Color(0, 153, 0));
         p5.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p5.setForeground(new java.awt.Color(0, 0, 0));
         p5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p5.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p5.setOpaque(true);
 
         p8.setBackground(new java.awt.Color(0, 153, 0));
         p8.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p8.setForeground(new java.awt.Color(0, 0, 0));
         p8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p8.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p8.setOpaque(true);
 
         p7.setBackground(new java.awt.Color(0, 153, 0));
         p7.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p7.setForeground(new java.awt.Color(0, 0, 0));
         p7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p7.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p7.setOpaque(true);
 
         p9.setBackground(new java.awt.Color(0, 153, 0));
         p9.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p9.setForeground(new java.awt.Color(0, 0, 0));
         p9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p9.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p9.setOpaque(true);
 
         p10.setBackground(new java.awt.Color(0, 153, 0));
         p10.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p10.setForeground(new java.awt.Color(0, 0, 0));
         p10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p10.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p10.setOpaque(true);
 
         p11.setBackground(new java.awt.Color(0, 153, 0));
         p11.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p11.setForeground(new java.awt.Color(0, 0, 0));
         p11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p11.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p11.setOpaque(true);
 
         p12.setBackground(new java.awt.Color(0, 153, 0));
         p12.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p12.setForeground(new java.awt.Color(0, 0, 0));
         p12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p12.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p12.setOpaque(true);
 
         p13.setBackground(new java.awt.Color(0, 153, 0));
         p13.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p13.setForeground(new java.awt.Color(0, 0, 0));
         p13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p13.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p13.setOpaque(true);
 
         p14.setBackground(new java.awt.Color(0, 153, 0));
         p14.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p14.setForeground(new java.awt.Color(0, 0, 0));
         p14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p14.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p14.setOpaque(true);
 
         p15.setBackground(new java.awt.Color(0, 153, 0));
         p15.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        p15.setForeground(new java.awt.Color(0, 0, 0));
         p15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         p15.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         p15.setOpaque(true);
@@ -240,7 +218,7 @@ public class Sopa extends javax.swing.JFrame {
                     .addComponent(p10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(p9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(p15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(p14, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                    .addComponent(p14, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
                     .addComponent(p13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(p11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(p12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -304,7 +282,7 @@ public class Sopa extends javax.swing.JFrame {
                 .addContainerGap(302, Short.MAX_VALUE))
         );
 
-        getContentPane().add(escritorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 36, 830, 550));
+        getContentPane().add(escritorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 36, 1170, 550));
 
         jMenuBar1.setForeground(new java.awt.Color(102, 102, 102));
         jMenuBar1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
@@ -314,7 +292,6 @@ public class Sopa extends javax.swing.JFrame {
         jMenu1.setForeground(new java.awt.Color(0, 204, 0));
         jMenu1.setText("JUEGO NUEVO");
         jMenu1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jMenu1.setOpaque(false);
         jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jMenu1MouseClicked(evt);
@@ -325,12 +302,12 @@ public class Sopa extends javax.swing.JFrame {
         setJMenuBar(jMenuBar1);
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>// </editor-fold>//GEN-END:initComponents
 
     private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
         //esta reinicia el juego
         for (int i = 0; i < letra.length; i++) {
-            palabra[i].setText(palabras[i]);//asigna a los label de la derecha las palabras
+            palabra[i].setText(palabrasS[1][i]);//asigna a los label de la derecha las palabras
         }
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
@@ -343,7 +320,7 @@ public class Sopa extends javax.swing.JFrame {
         gano = false;
         iniciox = new int[15];//crea un arreglo de enteros para guadar las posiciones de las palabras en x
         inicioy = new int[15];//crea un arreglo de enteros para guadar las posiciones de las palabras en y
-        direccion = new boolean[15];//crea un arreglo de enteros para guadar las direcion de las palabras ya sea hacia alante o hacia tras
+        direccion = new boolean[15];//crea un arreglo de enteros para guadar las direcion de las palabras ya sea hacia la derecha o la izquierda
         celdasDeLetras();
         colocarPalabras();
         llenarEspaciosVacios();
@@ -375,7 +352,7 @@ public class Sopa extends javax.swing.JFrame {
         if (!gano) {//verifica si gano el juego
             if (evt.getComponent().getBackground().equals(Color.WHITE))//verifica si la casilla esta de color blanco 
             {
-                evt.getComponent().setBackground(new java.awt.Color(0, 153, 0));//si esta de color blanco la pone de color azul
+                evt.getComponent().setBackground(new java.awt.Color(0, 153, 0));//si esta de color blanco la pone de color verde
                 tachar();
             }else if(evt.getComponent().getName().equals(""))//pregunta si la casilla no tiene una letra de alguna palabra
             {
@@ -386,8 +363,11 @@ public class Sopa extends javax.swing.JFrame {
     public void tachar() {
         for (int i = 0; i < 15; i++) {
             if (!palabra[i].getText().substring(0, 1).equals("<")) {
-                if (tacharLetra(iniciox[i],inicioy[i],palabra[i].getText().length(),direccion[i]))//pregunta si hay una palabra encontrada
+                //String auxString = palabras[i];
+                //int tam = auxString.length();
+                if (tacharLetra(iniciox[i],inicioy[i],palabras[i].length(),direccion[i]))//pregunta si hay una palabra encontrada
                 {
+                    System.out.println("Soy la del lado derecho" + i + palabra[i].getText());
                     palabra[i].setText("<html><body><s>"+palabra[i].getText()+"</s></body></html>");//tacha la palabra
                     break;
                 }
@@ -403,9 +383,11 @@ public class Sopa extends javax.swing.JFrame {
             }
         }
         if (aux) {
-            if (!(fin instanceof Final)) 
-            { //esto comprueba si la ventana no esta en memoria, entonces la instancia
-                fin = new Final();   
+            if (!(fin instanceof Final)) { //esto comprueba si la ventana no esta en memoria, entonces la instancia
+                tFinal = System.currentTimeMillis();
+                double tiempoJuego = (double) ((tFinal - tiempo)/1000);
+                System.out.println("Tiempo en segundos = " + tiempoJuego);
+                fin = new Final(tiempoJuego);   
                 gano = true;
             } 
             CentrarVentanaInterna(fin); //usamos el metodo generico para centrar
@@ -426,24 +408,24 @@ public class Sopa extends javax.swing.JFrame {
         }
     }//CentrarVentanaInterna
 //Verifica si se puede tachar la letra
-    public boolean  tacharLetra(int x,int y,int tamaño,boolean direccion) {
+    public boolean  tacharLetra(int x,int y,int tamanio,boolean direccion) {
         boolean respuesta = true;
-        if (direccion) {
-            for (int i = y; i < tamaño+y; i++) {
-                if (letra[x][i].getBackground().equals(Color.WHITE)) {
+        if (direccion) {//Si la palabra se lee de izquierda a derecha
+            for (int i = y; i < tamanio+y; i++) {
+                if (letra[x][i].getBackground().equals(Color.WHITE)) {//Si aun tiene casillas blancas
                     respuesta = false;
                     break;
                 }
             }
         }else {
-            for (int j = y; j > y-tamaño; j--) {
+            for (int j = y; j > y-tamanio; j--) {
                 if (letra[x][j].getBackground().equals(Color.WHITE)) {
                     respuesta = false;
                     break;
                 }
             }
         }
-        return respuesta;
+        return respuesta;//Retorna TRUE si ya se seleccionaron las letras que conforman la palabra, FALSE de lo ocntrario
     }//tacharLetra
     public void colocarPalabras() {
         String palabra[] = {"","","","","","","","","","","","","","",""};//palabra = palabrasS;
@@ -523,11 +505,12 @@ public class Sopa extends javax.swing.JFrame {
             numeros[x] = numero;
             System.out.println("Soy numeros[" + x + "] " + numeros[x]);
         }
-        return numeros;
+        return numeros;//Retorna arreglo con el orden en el que se pondran las palabras
     }//NumerosSinRepeticiones
     public void llenarEspaciosVacios() {
         //este arreglo ayuda a poner las letras del avecedario
-        String abc[] = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+        //String abc[] = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+        String abc[] = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","ñ","o","p","q","r","s","t","u","v","w","x","y","z"};
         Random random = new Random();
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 15; j++) {
@@ -536,6 +519,7 @@ public class Sopa extends javax.swing.JFrame {
                 }
             }
         }
+        tiempo = System.currentTimeMillis();
     }//LlenarEspaciosVacios
     /**
      * @param args the command line arguments
@@ -550,13 +534,13 @@ public class Sopa extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Sopa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Sopa1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Sopa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Sopa1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Sopa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Sopa1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Sopa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Sopa1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         /* Create and display the form */

@@ -12,8 +12,9 @@
 public class Final extends javax.swing.JInternalFrame {
 
     /** Creates new form Final */
-    public Final() {
+    public Final(double tiempoJuego) {
         initComponents();
+        TIEMPO.setText("Tiempo juego: " + String.valueOf(tiempoJuego/60) + " min");
     }
 
     /** This method is called from within the constructor to
@@ -25,21 +26,27 @@ public class Final extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        TIEMPO = new javax.swing.JLabel();
 
         setClosable(true);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagen.jpg"))); // NOI18N
+        TIEMPO.setText("Tiempo: ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(112, 112, 112)
+                .addComponent(TIEMPO, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(131, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(93, 93, 93)
+                .addComponent(TIEMPO, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 150, Short.MAX_VALUE))
         );
 
         pack();
@@ -47,6 +54,6 @@ public class Final extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    javax.swing.JLabel jLabel1;
+    javax.swing.JLabel TIEMPO;
     // End of variables declaration//GEN-END:variables
 }
