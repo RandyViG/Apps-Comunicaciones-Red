@@ -23,7 +23,7 @@ public class Cliente {
     }
     
     public String start( String d ){
-        String eco = "";
+        String palabra = "";
         try {
             cl = new DatagramSocket();
             try{
@@ -41,11 +41,34 @@ public class Cliente {
             cl.send(p1);
             DatagramPacket p2 = new DatagramPacket(new byte[100], 100);
             cl.receive(p2);
-            eco = new String(p2.getData(),0,p2.getLength());
+            palabra = new String(p2.getData(),0,p2.getLength());
         }catch(Exception e){
             e.printStackTrace();
         }
-        return eco;
-    } 
+        return palabra;
+    }
+
+    public void enviarTiempo( String tiempo ){
+        try {
+            cl = new DatagramSocket();
+            try{
+                dst = InetAddress.getByName(host);
+            }catch(UnknownHostException u){
+                System.err.println("Dirección no valida");
+                cl.close();
+                System.exit(1);
+            }
+            byte[] b = tiempo.getBytes();
+            bais = new ByteArrayInputStream(b);
+            byte[] b1 = new byte[30];
+            int n = bais.read(b1);
+            DatagramPacket p1 = new DatagramPacket(b1,n,dst,puerto);
+            cl.send(p1);
+            DatagramPacket p2 = new DatagramPacket(new byte[100], 100);
+            cl.receive(p2);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
     
 }

@@ -235,12 +235,19 @@ public class Ahorcado extends javax.swing.JFrame {
                 fin = System.currentTimeMillis();
                 tiempo = (double) ((fin - inicio)/1000) / 60;
                 JOptionPane.showMessageDialog(null,"*** Ganaste *** \n Tiempo de juego "+tiempo+" min");
+                Cliente cliente = new Cliente( 7300 , "localhost" );
+                cliente.enviarTiempo("t");
+                cliente.enviarTiempo(""+tiempo);
             }
             if( vidas == 0 ){
                 fin = System.currentTimeMillis();
                 tiempo = (double) ((fin - inicio)/1000) / 60;
                 jButton1.setEnabled(false);
                 JOptionPane.showMessageDialog(null,"*** Perdiste *** \n Tiempo de juego "+tiempo+" min");
+                Cliente cliente = new Cliente( 7300 , "localhost" );
+                cliente.enviarTiempo("t");
+                cliente.enviarTiempo(""+tiempo);
+                System.out.println("Tiempo enviando");
             }
         }
     }                                        
