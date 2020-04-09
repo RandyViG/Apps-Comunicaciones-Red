@@ -20,7 +20,7 @@ int main( int argc , char *argv[] ){
     struct sockaddr_storage peer_addr;
     socklen_t peer_addr_len, ctam;
     ssize_t nread;
-    char buf[BUF_SIZE],enviar[BUF_SIZE];
+    char buf[BUF_SIZE],enviar[BUF_SIZE],tiempo[7];
     char *facil[] = {"correo","escuela","computadora","telefono","deportivo","tablet"};
     char *medio[] = {"electrocardiograma","ferrocarril","fotosintesis","telecomunicaciones",
                      "fisioterapeuta","paralelepipedo"};
@@ -28,6 +28,8 @@ int main( int argc , char *argv[] ){
                     "vive cada instante como si fuera el ultimo","protocolo de control de transmisión",
                     "protocolo de datagramas de usuario","olvida aquello que no te permite avanzar"};
     int n;
+    FILE* archivo;
+    tiempo[6]='\0';
     srand(time(NULL));
 
     memset(&hints, 0, sizeof(struct addrinfo));
@@ -73,6 +75,7 @@ int main( int argc , char *argv[] ){
     for ( ; ; ){
         peer_addr_len = sizeof(struct sockaddr_storage);
         memset(enviar,0,BUF_SIZE);
+        memset(buf,0,BUF_SIZE);
         n = rand() % 6;
         nread = recvfrom(sd, buf, BUF_SIZE, 0,(struct sockaddr *) &peer_addr, &peer_addr_len);
         printf("Valor recibido %s\n",buf);
@@ -86,9 +89,22 @@ int main( int argc , char *argv[] ){
             printf("%d\n",strlen(dificil[n]) );
             memcpy( enviar,dificil[n],strlen(dificil[n]) );
         }
+        else if( !strcmp("t",buf) ){
+            archivo = fopen("TiemposDeJuego.txt", "at");
+            sendto(sd, enviar, BUF_SIZE, 0,(struct sockaddr *) &peer_addr,peer_addr_len);
+            nread = recvfrom(sd, buf, BUF_SIZE, 0,(struct sockaddr *) &peer_addr, &peer_addr_len);
+            if (nread  == -1)
+                continue;
+            memcpy(tiempo,buf,6);
+            fprintf(archivo,"%s\n",tiempo);
+            printf("Tiempo de juego: %s min\n",tiempo);
+            sendto(sd, enviar, BUF_SIZE, 0,(struct sockaddr *) &peer_addr,peer_addr_len);
+            fclose( archivo );
+            continue;
+        }
         else
             continue;
-        fprintf(stdout,"Palabra enviada %s\n",enviar);
+        fprintf(stdout,"Palabra enviada: %s\n",enviar);
         fflush(stdout);
         if ( sendto(sd, enviar, BUF_SIZE, 0,(struct sockaddr *) &peer_addr,peer_addr_len) != BUF_SIZE )
             fprintf(stderr, "Error sending response\n");
