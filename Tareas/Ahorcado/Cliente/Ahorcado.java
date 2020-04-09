@@ -14,7 +14,8 @@ public class Ahorcado extends javax.swing.JFrame {
     static char [] adivina, aux;
     static int vidas,tam,agregar;
     static ImageIcon imagen[];
-
+    long inicio, fin;
+    double tiempo;
     public Ahorcado( String opt ) {
         dificultad = opt;
         initComponents();
@@ -27,6 +28,7 @@ public class Ahorcado extends javax.swing.JFrame {
         imagen[4] = new ImageIcon(getClass().getResource("Imagenes/vida4.jpg"));
         imagen[5] = new ImageIcon(getClass().getResource("Imagenes/vida5.jpg"));
         jLabel2.setIcon( imagen[vidas] );
+        inicio = System.currentTimeMillis();
     }
     
     static void iniciar(){
@@ -230,11 +232,15 @@ public class Ahorcado extends javax.swing.JFrame {
                 jLabel2.setIcon( imagen[vidas] );
             }
             if( tam == agregar && vidas > 0){
-                    JOptionPane.showMessageDialog(null,"*** Ganaste *** \n :)");
+                fin = System.currentTimeMillis();
+                tiempo = (double) ((fin - inicio)/1000) / 60;
+                JOptionPane.showMessageDialog(null,"*** Ganaste *** \n Tiempo de juego "+tiempo+" min");
             }
             if( vidas == 0 ){
+                fin = System.currentTimeMillis();
+                tiempo = (double) ((fin - inicio)/1000) / 60;
                 jButton1.setEnabled(false);
-                JOptionPane.showMessageDialog(null,"*** Perdiste *** \n :(");
+                JOptionPane.showMessageDialog(null,"*** Perdiste *** \n Tiempo de juego "+tiempo+" min");
             }
         }
     }                                        
