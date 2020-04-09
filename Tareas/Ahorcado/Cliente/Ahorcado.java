@@ -3,7 +3,7 @@ import java.util.Arrays;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-
+import javax.swing.JOptionPane;
 /**
  *
  * @author randy
@@ -12,7 +12,7 @@ public class Ahorcado extends javax.swing.JFrame {
     static String dificultad;
     static String palabra;
     static char [] adivina, aux;
-    static int vidas;
+    static int vidas,tam,agregar;
     static ImageIcon imagen[];
 
     public Ahorcado( String opt ) {
@@ -38,8 +38,10 @@ public class Ahorcado extends javax.swing.JFrame {
         for( int i = 0 , j = 0 ; aux[i] != '\0' ; i++ , j+=2 ){
             if( aux[i] == 32 )
                 adivina[j] = ' ';
-            else
+            else{
                 adivina[j] = '_';
+                tam++;
+            }
             adivina[j+1] = ' ';
         }
         mostrarPalabra.setText( String.valueOf(adivina) );
@@ -214,23 +216,25 @@ public class Ahorcado extends javax.swing.JFrame {
             letra = jTextField1.getText();
             jTextField1.setText("");
             if( palabra.indexOf(letra) > -1 ){
-            for( int i=0 , j=0; aux[i] != '\0' ; i++ , j+=2){
-                if(aux[i] == letra.charAt(0)){
-                    adivina[j] = aux[i];
-                    mostrarPalabra.setText(String.valueOf(adivina));
+                for( int i=0 , j=0; aux[i] != '\0' ; i++ , j+=2){
+                    if(aux[i] == letra.charAt(0)){
+                        adivina[j] = aux[i];
+                        agregar++;
+                        mostrarPalabra.setText(String.valueOf(adivina));
+                    }
                 }
-            }
-            if( aux.equals( adivina ) && vidas > 0)
-                System.out.println("Ganaste!");
             }
             else{
                 vidas--;
                 numVidas.setText(String.valueOf(vidas));
                 jLabel2.setIcon( imagen[vidas] );
             }
+            if( tam == agregar && vidas > 0){
+                    JOptionPane.showMessageDialog(null,"*** Ganaste *** \n :)");
+            }
             if( vidas == 0 ){
                 jButton1.setEnabled(false);
-                System.out.println("Perdiste!");
+                JOptionPane.showMessageDialog(null,"*** Perdiste *** \n :(");
             }
         }
     }                                        
