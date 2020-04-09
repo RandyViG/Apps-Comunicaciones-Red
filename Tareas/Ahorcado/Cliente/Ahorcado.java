@@ -14,9 +14,7 @@ public class Ahorcado extends javax.swing.JFrame {
     static char [] adivina, aux;
     static int vidas;
     static ImageIcon imagen[];
-    /**
-     * Creates new form Ahorcado
-     */
+
     public Ahorcado( String opt ) {
         dificultad = opt;
         initComponents();
@@ -28,14 +26,12 @@ public class Ahorcado extends javax.swing.JFrame {
         imagen[3] = new ImageIcon(getClass().getResource("Imagenes/vida3.jpg"));
         imagen[4] = new ImageIcon(getClass().getResource("Imagenes/vida4.jpg"));
         imagen[5] = new ImageIcon(getClass().getResource("Imagenes/vida5.jpg"));
+        jLabel2.setIcon( imagen[vidas] );
     }
     
     static void iniciar(){
         vidas = 5;
-        
         Cliente cliente = new Cliente( 7300 , "localhost" );
-        
-        //jLabel2.updateUI();
         palabra = cliente.start( dificultad );
         adivina = new char[ palabra.length() ];
         aux = palabra.toCharArray();
@@ -121,8 +117,6 @@ public class Ahorcado extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 88, Short.MAX_VALUE)
         );
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ahorcado/Imagenes/vida5.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -232,7 +226,6 @@ public class Ahorcado extends javax.swing.JFrame {
             else{
                 vidas--;
                 numVidas.setText(String.valueOf(vidas));
-                System.out.println("Vidas: " + vidas);
                 jLabel2.setIcon( imagen[vidas] );
             }
             if( vidas == 0 ){
