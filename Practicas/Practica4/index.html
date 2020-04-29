@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Cliente </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+    <div class = "content">
+        <div class="col-md-6 order-md-2 mb-4">
+            <h2>Formulario GET</h2>
+            <form action="http://localhost:8080" method="get">
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <label for="formGroupExampleInput">Nombre:</label>
+                        <input type="text" class="form-control" placeholder="Ingresa tu nombre" name="Nombre">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <label for="formGroupExampleInput">Apellido:</label>
+                        <input type="text" class="form-control" placeholder="Ingresa tu apellido" name="Apellido">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <label for="formGroupExampleInput">Edad:</label>
+                        <input type="number" class="form-control" name="Edad">
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Enviar</button>
+            </form>
+        </div>
+        </div>
+
+        <div class="col-md-6 order-md-2 mb-4">
+            <h2>Formulario POST</h2>
+            <form action="http://localhost:8080" method="post">
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <label for="formGroupExampleInput">Usuario:</label>
+                        <input type="text" class="form-control" name="User">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <label for="formGroupExampleInput">Contraseña:</label>
+                        <input type="password" class="form-control" name="Password">
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Login </button>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="col order-md-2 mb-4">
+        <h3>Recursos</h3>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><a href="http://localhost:8080/resources/escom.png">Logo ESCOM</a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/http-guia.pdf">Guia http</a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/ipn.png">Logo IPN</a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/java.png">Logo Java</a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/procesos.c">Ejemplo Procesos C</a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/servidor.c">Ejemplo Servidor C</a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/ReporteExamen.pdf"> Reporte Examen </a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/Session4.pdf"> Resporte Sesson 4</a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/private"> Carpeta Privada</a></li>
+            <li class="list-group-item"><a href="http://localhost:8080/resources/Drive.java">Practica 1: Drive </a></li>
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+</body>
+</html>
