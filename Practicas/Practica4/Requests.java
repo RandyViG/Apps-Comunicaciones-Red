@@ -3,18 +3,12 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 class Requests implements Runnable{
 
     protected Socket cl = null;
-    protected PrintWriter pw;
-	protected BufferedOutputStream bos;
     protected DataInputStream dis;
     protected DataOutputStream dos;
     protected Mime mime;
@@ -27,7 +21,6 @@ class Requests implements Runnable{
                     "Server: webServer/1.0 \n" +
                     "Content-Type: text/html \n"+
                     "Date: " + new Date() + " \n\r\n";
-                    //"Connection: Keep-Alive \n\r\n";
     }
 
     @Override
@@ -35,8 +28,6 @@ class Requests implements Runnable{
         try {
             dis = new DataInputStream( cl.getInputStream() );
             dos = new DataOutputStream( cl.getOutputStream() );
-            bos=new BufferedOutputStream( cl.getOutputStream() );
-			pw=new PrintWriter( new OutputStreamWriter(bos) );
             
             @Deprecated
             String statusLine = dis.readLine();
@@ -59,10 +50,8 @@ class Requests implements Runnable{
                 if( statusLine.startsWith("GET") ){
                     if( statusLine.indexOf("?") != -1 ){
 	                    String response = getParameters( statusLine );
-	                    //dos.writeUTF( response );
-                        //dos.flush();
-                        pw.write(response);
-                        pw.flush();
+	                    dos.writeUTF( response );
+                        dos.flush();
 	                    System.out.println("Respuesta GET: \n" + response);
                     }else{
                         String fileName = getFileName( 5 , statusLine );
@@ -101,14 +90,8 @@ class Requests implements Runnable{
                     System.out.println("Respuesta ERROR 501: \n" + error501);
                 }
                 System.out.println("Cliente Atendido");
-                pw.flush();
-                pw.close();
-                dos.flush();
-                dos.close();
-                dis.close();
-                cl.close();
             }
-        }catch (IOException e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -150,7 +133,7 @@ class Requests implements Runnable{
         	    value = paramValue.nextToken();
         	html = html + "<tr><td><b>" + param + "</b></td><td>" + value + "</td></tr>\n";
         }
-        html = html + "</table></center></body></html>";
+        html = html + "</table></center></body></html>\r\n";
         return html;
     }
 
