@@ -4,35 +4,44 @@ import java.util.StringTokenizer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.BufferedOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-class Manejador implements Runnable{
+class Requests implements Runnable{
 
     protected Socket cl = null;
-    protected BufferedReader br;
+    protected PrintWriter pw;
+	protected BufferedOutputStream bos;
     protected DataInputStream dis;
     protected DataOutputStream dos;
     protected Mime mime;
+    protected String headers;
 
-    public Manejador(Socket cl) throws Exception {
+    public Requests(Socket cl) throws Exception {
         this.cl = cl;
         mime = new Mime();
+        headers =   "HTTP/1.1 200 OK \r\n" +
+                    "Server: webServer/1.0 \n" +
+                    "Content-Type: text/html \n"+
+                    "Date: " + new Date() + " \n\r\n";
+                    //"Connection: Keep-Alive \n\r\n";
     }
 
+    @Override
     public void run() {
-        String headers = "HTTP/1.1 200 OK\n" +
-            			 "Date: " + new Date() + " \n" +
-          				 "Server: webServer/1.0 \n" +
-          				 "Content-Type: text/html \n\n";
         try {
             dis = new DataInputStream( cl.getInputStream() );
             dos = new DataOutputStream( cl.getOutputStream() );
+            bos=new BufferedOutputStream( cl.getOutputStream() );
+			pw=new PrintWriter( new OutputStreamWriter(bos) );
             
+            @Deprecated
             String statusLine = dis.readLine();
             if ( statusLine == null ){
-                String empty = "<html><head><title>Servidor WEB</title><body bgcolor=\"#AACCFF\"<br>statusLinea Vacia</br></body></html>";
+                String empty = "<html><head><title>Servidor WEB</title><body> <br>statusLinea Vacia</br></body></html>";
                 dos.writeUTF( empty );
                 dos.flush();
                 dos.close();
@@ -49,9 +58,11 @@ class Manejador implements Runnable{
 
                 if( statusLine.startsWith("GET") ){
                     if( statusLine.indexOf("?") != -1 ){
-	                    String response = getParameters(statusLine, headers);
-	                    dos.write( response.getBytes() );
-	                    dos.flush();
+	                    String response = getParameters( statusLine );
+	                    //dos.writeUTF( response );
+                        //dos.flush();
+                        pw.write(response);
+                        pw.flush();
 	                    System.out.println("Respuesta GET: \n" + response);
                     }else{
                         String fileName = getFileName( 5 , statusLine );
@@ -65,7 +76,7 @@ class Manejador implements Runnable{
                     byte []lineS = new byte[ lenLine ];
                     dis.read(lineS, 0, lenLine);
                     String line = new String(lineS, 0, lenLine);
-                    String response = getParameters( line , headers );
+                    String response = getParameters( line );
                     dos.writeUTF(response);
                     dos.flush();
                     System.out.println("Respuesta POST: \n" + response);
@@ -77,61 +88,60 @@ class Manejador implements Runnable{
                 }
                 else if( statusLine.startsWith("DELETE") ){
                     String fileName = getFileName( 8 , statusLine );
-                    deleteSource(fileName , headers);
+                    deleteSource(fileName);
                 }
                 else{
-                    String error501 = "HTTP/1.1 501 Not Implemented\n" +
-                    				  "Date: " + new Date() + " \n" +
-		              				  "Server: webServer/1.0 \n" +
-		              				  "Content-Type: text/html \n\n";
+                    String error501 =   "HTTP/1.1 501 Not Implemented \r\n" +
+		              				    "Server: webServer/1.0 \n" +
+                                        "Content-Type: text/html \n" +
+                                        "Date: " + new Date() + " \n\r\n";
                     dos.writeUTF( error501 );
                     dos.flush();
                     sendSource("error/501.html");
                     System.out.println("Respuesta ERROR 501: \n" + error501);
                 }
                 System.out.println("Cliente Atendido");
+                pw.flush();
+                pw.close();
                 dos.flush();
                 dos.close();
                 dis.close();
+                cl.close();
             }
         }catch (IOException e) {
             e.printStackTrace();
         }
-        try {
-            cl.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
-    private String getParameters( String statusLine , String headers ){
-        String method = "",request;
+    private String getParameters( String statusLine){
+        String method = "",line;
+                           
         if( statusLine.startsWith("GET") ){
             method = "GET";
         	// Line: GET /?Nombre=&Direccion=&Telefono=&Comentarios= HTTP/1.1
         	StringTokenizer tokens = new StringTokenizer( statusLine , "?" );
-            request = tokens.nextToken();
-            request = tokens.nextToken();
-            tokens = new StringTokenizer(request, " ");
-            request = tokens.nextToken();
+            line = tokens.nextToken();
+            line = tokens.nextToken();
+            tokens = new StringTokenizer(line, " ");
+            line = tokens.nextToken();
         }else{
             method= "POST";
             String[] reqLineas = statusLine.split("\n");
             System.out.println("Tam: " + reqLineas.length);
             int ult = reqLineas.length - 1;
-            request = reqLineas[ult];
-            System.out.println("Obtener: " +  request );
+            line = reqLineas[ult];
+            System.out.println("Obtener: " +  line );
         }
 
-        StringTokenizer paramsTokens = new StringTokenizer(request, "&");
+        StringTokenizer tokens = new StringTokenizer(line, "&");
         String html = headers +
-					"<html><head><meta charset='UTF-8'><title>Metodo " + method  + "\n" +
+					"<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Metodo " + method +
                     "</title></head><body><center><h2>Parametros obtenidos, Método " 
                     + method + "</h2><br>\n" + "<table border='0'><tr><th>Parametro</th><th>Valor</th></tr>";
 
-        while(paramsTokens.hasMoreTokens()) {
-        	String parametros = paramsTokens.nextToken();
-        	StringTokenizer paramValue = new StringTokenizer( parametros , "=" );
+        while(tokens.hasMoreTokens()) {
+        	String parameters = tokens.nextToken();
+        	StringTokenizer paramValue = new StringTokenizer( parameters , "=" );
         	String param = "";
             String value = "";
             if ( paramValue.hasMoreTokens() )
@@ -156,24 +166,25 @@ class Manejador implements Runnable{
         String responseHead = "";
         try{
             File file = new File( fileName );
-        	String statusResponse = "HTTP/1.1 200 OK\n";
+        	String statusResponse = "HTTP/1.1 200 OK \r\n";
         	if( !file.exists() ){
         		fileName= "error/404.html"; // Recurso no encontrado
-        		statusResponse = "HTTP/1.1 404 Not Found\n";
+        		statusResponse = "HTTP/1.1 404 Not Found \r\n";
         	}
         	else if( file.isDirectory() ) {
         		fileName = "error/403.html"; // Recurso privado
-        		statusResponse = "HTTP/1.1 403 Forbidden\n";
+        		statusResponse = "HTTP/1.1 403 Forbidden \r\n";
         	}
     		DataInputStream d = new DataInputStream( new FileInputStream(fileName) ); 
     		int len = d.available();
             int index = fileName.indexOf(".");
             String extension = fileName.substring( index + 1 , fileName.length() );
 
-            responseHead = statusResponse + "Date: " + new Date() + " \n" +
+            responseHead = statusResponse + 
 		                    "Server: webServer/1.0 \n" +
-		                    "Content-Type: " + mime.get(extension) + " \n" + 
-                            "Content-Length: " + len + " \n\n";
+                            "Content-Type: " + mime.get(extension) + " \n" +
+                            "Date: " + new Date() + " \n" + 
+                            "Content-Length: " + len + " \n\r\n";
             d.close();
             dos.writeUTF( responseHead );
         }catch( Exception e ) {
@@ -206,7 +217,7 @@ class Manejador implements Runnable{
         }
     }
 
-    private void deleteSource( String fileName , String headers){
+    private void deleteSource( String fileName ){
         File f = new File( fileName );
         try{
             if( f.exists() ){
@@ -224,10 +235,10 @@ class Manejador implements Runnable{
                 }
                 else{
                     System.out.println( "El archivo: " + fileName + " no puede ser eliminado");
-                    String error =  "HTTP/1.1  500 Internal server error \n" +
-                                    "Date: " + new Date() + " \n" +
+                    String error =  "HTTP/1.1  500 Internal server error \r\n" +
                                     "Server: webServer/1.0 \n" +
-                                    "Content-Type: text/html \n\n" +
+                                    "Content-Type: text/html \n" +
+                                    "Date: " + new Date() + " \n\r\n" +
                                     "<html><head><meta charset='UTF-8'><title>Server Error</title></head>" +
                                     "<body><h1>500 Internal server error</h1>" +
                                     "<p>El recurso: " + name[1] + " no se puede borrar.</p>" +
@@ -238,10 +249,10 @@ class Manejador implements Runnable{
                 }
             }
             else{
-                String error = "HTTP/1.1 404 Not Found\n" +
-                                "Date: " + new Date() + " \n" +
+                String error = "HTTP/1.1 404 Not Found \r\n" +
                                 "Server: webServer/1.0 \n" +
-                                "Content-Type: text/html \n\n" +
+                                "Content-Type: text/html \n" +
+                                "Date: " + new Date() + " \n\r\n" +
                                 "<html><head><meta charset='UTF-8'><title>404 Not found</title></head>" +
                                 "<body><h1>404 Not found</h1>" +
                                 "<p>El recurso: " + fileName + " no se encontro.</p>" +

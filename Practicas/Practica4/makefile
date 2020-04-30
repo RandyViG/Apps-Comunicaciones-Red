@@ -1,8 +1,8 @@
-server:	ServerHTTP.java Manejador.class Mime.class
+server:	ServerHTTP.java Requests.class Mime.class
 	javac ServerHTTP.java
 	java ServerHTTP
-Manejador.class: Manejador.java Mime.class
-	javac Manejador.java
+Requests.class: Requests.java Mime.class
+	javac Requests.java
 Mime.class: Mime.java
 	javac Mime.java
 clean:

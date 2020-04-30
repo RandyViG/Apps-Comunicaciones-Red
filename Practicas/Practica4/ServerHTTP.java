@@ -34,7 +34,7 @@ public class ServerHTTP implements Runnable {
                 throw new RuntimeException("Error al aceptar nueva conexion", e);
             }
             try {
-                this.pool.execute( new Manejador(cl) );
+                this.pool.execute( new Requests(cl) );
             } catch (Exception e) {
                 e.printStackTrace();
             }
