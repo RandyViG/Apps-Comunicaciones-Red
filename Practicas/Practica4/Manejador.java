@@ -50,11 +50,11 @@ class Manejador implements Runnable{
                 if( statusLine.startsWith("GET") ){
                     if( statusLine.indexOf("?") != -1 ){
 	                    String response = getParameters(statusLine, headers);
-	                    dos.writeUTF( response );
+	                    dos.write( response.getBytes() );
 	                    dos.flush();
 	                    System.out.println("Respuesta GET: \n" + response);
                     }else{
-                        String fileName = getFileName( statusLine );
+                        String fileName = getFileName( 5 , statusLine );
                         fileName = getMetadata( fileName );
                         System.out.println("Archivo: " + fileName);
 	                    sendSource( fileName );
@@ -71,12 +71,12 @@ class Manejador implements Runnable{
                     System.out.println("Respuesta POST: \n" + response);
                 } 
                 else if ( statusLine.startsWith("HEAD") ){
-                    String fileName = getFileName( statusLine );
+                    String fileName = getFileName( 6 , statusLine );
                     System.out.println("Respuesta HEAD:");
                     fileName = getMetadata( fileName );
                 }
                 else if( statusLine.startsWith("DELETE") ){
-                    String fileName = getFileName( statusLine );
+                    String fileName = getFileName( 8 , statusLine );
                     deleteSource(fileName , headers);
                 }
                 else{
@@ -90,11 +90,16 @@ class Manejador implements Runnable{
                     System.out.println("Respuesta ERROR 501: \n" + error501);
                 }
                 System.out.println("Cliente Atendido");
+                dos.flush();
                 dos.close();
                 dis.close();
-                cl.close();
             }
         }catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            cl.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -139,8 +144,8 @@ class Manejador implements Runnable{
         return html;
     }
 
-    private String getFileName( String statusLine ){
-        String file = statusLine.substring( 5, statusLine.length() );
+    private String getFileName( int start , String statusLine ){
+        String file = statusLine.substring( start , statusLine.length() );
         String source = file.substring( 0 , file.indexOf(" ") );
         if( source.compareTo(" ") == 0 )
             source = "index.html";
