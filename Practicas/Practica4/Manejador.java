@@ -4,12 +4,14 @@ import java.util.StringTokenizer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 class Manejador implements Runnable{
 
     protected Socket cl = null;
+    protected BufferedReader br;
     protected DataInputStream dis;
     protected DataOutputStream dos;
     protected Mime mime;
@@ -27,8 +29,9 @@ class Manejador implements Runnable{
         try {
             dis = new DataInputStream( cl.getInputStream() );
             dos = new DataOutputStream( cl.getOutputStream() );
+            
             String statusLine = dis.readLine();
-            if ( statusLine.length() == 0 ){
+            if ( statusLine == null ){
                 String empty = "<html><head><title>Servidor WEB</title><body bgcolor=\"#AACCFF\"<br>statusLinea Vacia</br></body></html>";
                 dos.writeUTF( empty );
                 dos.flush();
@@ -62,7 +65,7 @@ class Manejador implements Runnable{
                     byte []lineS = new byte[ lenLine ];
                     dis.read(lineS, 0, lenLine);
                     String line = new String(lineS, 0, lenLine);
-                    String response = getParameters( line, headers );
+                    String response = getParameters( line , headers );
                     dos.writeUTF(response);
                     dos.flush();
                     System.out.println("Respuesta POST: \n" + response);
@@ -71,6 +74,10 @@ class Manejador implements Runnable{
                     String fileName = getFileName( statusLine );
                     System.out.println("Respuesta HEAD:");
                     fileName = getMetadata( fileName );
+                }
+                else if( statusLine.startsWith("DELETE") ){
+                    String fileName = getFileName( statusLine );
+                    deleteSource(fileName , headers);
                 }
                 else{
                     String error501 = "HTTP/1.1 501 Not Implemented\n" +
@@ -192,5 +199,55 @@ class Manejador implements Runnable{
         }catch( Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+    private void deleteSource( String fileName , String headers){
+        File f = new File( fileName );
+        try{
+            if( f.exists() ){
+                String[] name = fileName.split("/");
+                if( f.delete() ){
+                    System.out.println( "Archivo: " + fileName + " eliminado");
+                    String delete = headers +
+                                      "<html><head><meta charset='UTF-8'><title>202 Succesuful</title></head>" +
+                                      "<body><h1>202 Recurso eliminado exitosamente.</h1>" +
+                                      "<p>El recurso " + name[1] + " ha sido eliminado permanentemente del servidor.</p>" + 
+                                      "</body></html>";
+                    dos.writeUTF(delete);
+                    dos.flush();
+                    System.out.println("Respuesta DELETE: \n" + delete);
+                }
+                else{
+                    System.out.println( "El archivo: " + fileName + " no puede ser eliminado");
+                    String error =  "HTTP/1.1  500 Internal server error \n" +
+                                    "Date: " + new Date() + " \n" +
+                                    "Server: webServer/1.0 \n" +
+                                    "Content-Type: text/html \n\n" +
+                                    "<html><head><meta charset='UTF-8'><title>Server Error</title></head>" +
+                                    "<body><h1>500 Internal server error</h1>" +
+                                    "<p>El recurso: " + name[1] + " no se puede borrar.</p>" +
+                                    "</body></html>";
+                    dos.writeUTF(error);
+                    dos.flush();
+                    System.out.println("Respuesta DELETE: \n" + error);
+                }
+            }
+            else{
+                String error = "HTTP/1.1 404 Not Found\n" +
+                                "Date: " + new Date() + " \n" +
+                                "Server: webServer/1.0 \n" +
+                                "Content-Type: text/html \n\n" +
+                                "<html><head><meta charset='UTF-8'><title>404 Not found</title></head>" +
+                                "<body><h1>404 Not found</h1>" +
+                                "<p>El recurso: " + fileName + " no se encontro.</p>" +
+                                "</body></html>";
+                dos.writeUTF(error);
+                dos.flush();
+                System.out.println("Respuesta DELETE: \n" + error);
+            }
+        } catch (Exception e) {
+                e.printStackTrace();
+        }
+        System.out.println( "El archivo: " + fileName + " no existe");
     }
 }
