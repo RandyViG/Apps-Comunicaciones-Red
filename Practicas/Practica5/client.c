@@ -64,10 +64,14 @@ int main( int argc , char *argv[] ) {
     
     free(thread);
 
-    for( i=0; i < NumBuckets ; i++)
-        for( j=1; j <= buckets[i].len ; j++ )
-            printf("%d\n", buckets[i].elements[j]);
-
+    for( i=0; i < NumBuckets ; i++){
+        for( j=1; j <= buckets[i].len ; j++ ){
+            if( j % 10 == 0 )
+                printf("\n");
+            printf("%d ,", buckets[i].elements[j]);
+        }
+        printf("\n");
+    }
     free(buckets);
     return 0;
 }
