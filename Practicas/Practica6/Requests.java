@@ -15,6 +15,7 @@ class Requests{
 
     public void response( String statusLine , SocketChannel ch ){
         try{
+            mime = new Mime();
             if ( statusLine == null ){
                 String empty = "<html><head><title>Servidor WEB</title><body> <br>statusLinea Vacia</br></body></html>";
                 b2 = ByteBuffer.wrap(empty.getBytes());
@@ -153,9 +154,9 @@ class Requests{
                             "Content-Type: " + mime.get(extension) + " \n" +
                             "Date: " + new Date() + " \n" + 
                             "Content-Length: " + len + " \n\r\n";
-            headers = responseHead;
+            this.headers = responseHead;
         }catch( Exception e ) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         System.out.println( responseHead );
         return fileName;
@@ -165,7 +166,6 @@ class Requests{
         try{
             File file = new File( fileName );
             if ( file.exists() && !file.isDirectory() ){
-                
                 ByteBuffer buffer = ByteBuffer.allocate( bufferSize );
                 FileInputStream is = new FileInputStream( fileName );
                 FileChannel source = is.getChannel();
