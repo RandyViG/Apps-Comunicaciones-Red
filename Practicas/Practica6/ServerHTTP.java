@@ -33,12 +33,16 @@ public class ServerHTTP {
                         continue;
                     }
                     if( k.isReadable() ){
+                        String statusLine;
                         SocketChannel ch =(SocketChannel)k.channel();
                         ByteBuffer b = ByteBuffer.allocate(2000);
                         b.clear();
                         int n = ch.read(b);
                         b.flip();
-                        String statusLine = new String(b.array(),0,n);
+                        if( n != -1)
+                            statusLine = new String(b.array(),0,n);
+                        else
+                            statusLine = "";
                         request = new Requests();
                         request.response( statusLine, ch );
                         ch.close();
