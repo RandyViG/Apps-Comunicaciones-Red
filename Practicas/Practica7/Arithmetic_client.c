@@ -14,6 +14,7 @@ void prefix( char *notation , char *host );
 void infix_to_postfix( char *notation );
 void arithmetic_prg_1(char *host);
 int operator_type( elemento * operator );
+int parentheses( char *notation );
 
 int main (int argc, char *argv[]){
 	char *host , notation[100];
@@ -22,7 +23,7 @@ int main (int argc, char *argv[]){
 		printf ("usage: %s server_host\n", argv[0]);
 		exit (1);
 	}
-	printf("Ingresa la notación a evaluar:\n");
+	printf("Ingresa la expresión a evaluar:\n");
 	scanf("%s",notation);
 	printf("La notación es: %s\n",notation);
 	printf("Ingresa el tipo de notacion (Postfija = 1 , Prefija = 2 , Infija = 3):\n");
@@ -47,8 +48,40 @@ int main (int argc, char *argv[]){
 }
 
 void infix_to_postfix( char *notation ){
-	char *postfix;
+	int index = 0 , size, i, type;
+	elemento aux[100], post[100];
+	size = strlen( notation );
 
+	if( parentheses(notation) == 0 ){
+		printf("Error! \nEl numero de parentesis no es correcto\n");
+		exit(1);
+	}
+
+	pila stack;
+	Initialize(&stack);
+
+	for( i = 0; i < size ; i++ )
+		aux[i].c = notation[i];
+
+	for( i = 0 ; i < size ; i++){
+		type = operator_type( &aux[i] );
+		if( type < 5 )
+			add_operator( aux[i] , &stack , post , &index , type );
+		else
+			post[index++] = aux[i];
+	}
+
+	while( Empty(&stack) == 0 )
+		post[index++] = Pop( &stack );
+	
+	post[index].c = '\0';
+
+	memset( notation , 0 , 100 );
+
+	for( i=0 ; post[i].c != '\0'; i++)
+		notation[i] = post[i].c;
+	
+	notation[i] = '\0';
 }
 
 void postfix( char *notation , char * host ){
@@ -220,6 +253,65 @@ int operator_type( elemento *operator ){
 	return 5; // Is operand
 }
 
+int parentheses( char *notation ){
+	int i,j,size;
+	pila stack;
+	elemento aux;
+	size = strlen(notation);
+	Initialize(&stack);
+
+	for( i = 0; i < size ; i++){
+		if( notation[i] == '(' ){
+			aux.c = '(';
+			Push( &stack , aux );
+		}
+		else if( notation[i] == ')' ){
+			if( Empty(&stack) )
+				return 0;
+			aux = Pop( &stack );
+		}
+	}
+
+	if( !Empty(&stack) )
+		return 0;
+
+	Destroy(&stack);	
+	return 1;
+}
+
+void add_operator( elemento e , pila * S , elemento post[] , int * j , int type ){
+	switch( type ){
+	case 0:
+		Push( S, e );
+		break;
+	case 1:
+		elemento aux;
+		aux = Top(S);
+		while( operator_type( &aux ) != 0 ){
+			post[*j] = Pop( S );
+			*j++;
+			aux = Top(S);
+		}
+		Pop(S);
+		break;
+	default:
+		elemento aux;
+		aux = Top(S);
+		if( Empty(S) == 1 || type > operator_type( &aux ) )
+			Push( S , e );
+		else{
+			elemento aux;
+			aux = Top(S);
+			while( Empty(S) == 1 || type  <= operator_type( &aux ) ){
+				post[*j] = Pop( S );
+				*j++;
+				aux = Top(S);
+			}
+			Push( S , e );
+		}
+		break;
+	}
+}
 
 void arithmetic_prg_1(char *host) {
 	CLIENT *clnt;
