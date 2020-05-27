@@ -10,7 +10,7 @@
 
 void infix( char *notation );
 void postfix( char *notation , char*host );
-void prefix( char *notation );
+void prefix( char *notation , char *host );
 void infix_to_postfix( char *notation );
 void arithmetic_prg_1(char *host);
 int operator_type( elemento * operator );
@@ -28,23 +28,21 @@ int main (int argc, char *argv[]){
 	printf("Ingresa el tipo de notacion (Postfija = 1 , Prefija = 2 , Infija = 3):\n");
 	scanf("%d",&type);
 	host = argv[1];
-	switch( type )
-	{
-	case 1:
-		postfix( notation , host );
-		break;
-	case 2:
-		prefix( notation );
-		break;
-	case 3:
-		infix_to_postfix( notation );
-		postfix( notation , host);
-		break;
-	default:
-		printf("Tipo de notación invalido!\n");
-		break;
+	switch( type ){
+		case 1:
+			postfix( notation , host );
+			break;
+		case 2:
+			prefix( notation , host );
+			break;
+		case 3:
+			infix_to_postfix( notation );
+			postfix( notation , host);
+			break;
+		default:
+			printf("Tipo de notación invalido!\n");
+			break;
 	}
-	//arithmetic_prg_1 (host);
 	exit (0);
 }
 
@@ -55,8 +53,9 @@ void infix_to_postfix( char *notation ){
 
 void postfix( char *notation , char * host ){
 	CLIENT *clnt;
-	float  *result_1;
-	operands  addition_1_arg;
+	float *result;
+	operands arg;
+
 	#ifndef	DEBUG
 		clnt = clnt_create (host, ARITHMETIC_PRG, ARTIHMETIC_VER, "udp");
 		if (clnt == NULL) {
@@ -71,7 +70,6 @@ void postfix( char *notation , char * host ){
 	Initialize( &stack );
 	for( i = 0 ; i < strlen( notation ) ; i++ ){
 		aux.c = notation[i];
-		//printf("Entre y asigne: %c\n",aux.c);
 		type = operator_type( &aux );
 		if( type == 6 ){
 			//Evaluar trigonometrico
@@ -84,36 +82,32 @@ void postfix( char *notation , char * host ){
 		else{
 			operand1 = Pop( &stack );
 			operand2 = Pop( &stack );
-			addition_1_arg.operand1 = operand1.f;
-			addition_1_arg.operand2 = operand2.f;
+			arg.operand1 = operand1.f;
+			arg.operand2 = operand2.f;
 			switch( aux.c ){
 				case '+':
-					//value.f = operand1.f + operand2.f;
-					result_1 = addition_1(&addition_1_arg, clnt);
-					if (result_1 == (float *) NULL) 
+					result = addition_1(&arg, clnt);
+					if (result == (float *) NULL) 
 						clnt_perror (clnt, "call failed");
-					value.f = *result_1;
+					value.f = *result;
 				break;
 				case '-':
-					//value.f = operand2.f - operand1.f;
-					result_1 = subtraction_1(&addition_1_arg, clnt);
-					if (result_1 == (float *) NULL) 
+					result = subtraction_1(&arg, clnt);
+					if (result == (float *) NULL) 
 					clnt_perror (clnt, "call failed");
-					value.f = *result_1;
+					value.f = *result;
 				break;
 				case '*':
-					result_1 = multiplication_1(&addition_1_arg, clnt);
-					if (result_1 == (float *) NULL) 
+					result = multiplication_1(&arg, clnt);
+					if (result == (float *) NULL) 
 						clnt_perror (clnt, "call failed");
-					value.f = *result_1;
-					//value.f = operand1.f * operand2.f;
+					value.f = *result;
 				break;
 				case '/':
-					result_1 = division_1(&addition_1_arg, clnt);
-					if (result_1 == (float *) NULL)
+					result = division_1(&arg, clnt);
+					if (result == (float *) NULL)
 						clnt_perror (clnt, "call failed");
-					value.f = *result_1;
-					//value.f = operand2.f / operand1.f;
+					value.f = *result;
 				break;
 				case '^':
 					//value.f = pow(operand2.f, operand1.f);
@@ -126,21 +120,37 @@ void postfix( char *notation , char * host ){
 		printf("Error!\nLa expresión tenia un error");
 		exit(-1);
 	}
+
 	value = Pop( &stack );
 	printf("El resultado de: %s = %f\n",notation,value.f);
+	
+	#ifndef	DEBUG
+		clnt_destroy (clnt);
+	#endif	 /* DEBUG */
 }
 
-void prefix( char *notation ){
+void prefix( char *notation , char * host ){
+
+	CLIENT *clnt;
+	float *result;
+	operands arg;
+
+	#ifndef	DEBUG
+		clnt = clnt_create (host, ARITHMETIC_PRG, ARTIHMETIC_VER, "udp");
+		if (clnt == NULL) {
+			clnt_pcreateerror (host);
+			exit (1);
+		}
+	#endif
+
 	pila stack;
 	elemento aux,value,operand1,operand2;
 	int i, type;
 	Initialize( &stack );
-	for( i = strlen( notation ) ; i >= 0  ; i-- ){
+	for( i = strlen( notation ) - 1  ; i >= 0  ; i-- ){
 		aux.c = notation[i];
-		printf("Entre y asigne: %c\n",aux.c);
 		type = operator_type( &aux );
 		if( type == 6 ){
-			printf("Trigo?\n");
 			//Evaluar trigonometrico
 			Push( &stack , value );
 		}
@@ -151,18 +161,32 @@ void prefix( char *notation ){
 		else{
 			operand1 = Pop( &stack );
 			operand2 = Pop( &stack );
+			arg.operand1 = operand1.f;
+			arg.operand2 = operand2.f;
 			switch( aux.c ){
 				case '+':
-					//value.f = operand1.f + operand2.f;
+					result = addition_1(&arg, clnt);
+					if (result == (float *) NULL) 
+						clnt_perror (clnt, "call failed");
+					value.f = *result;
 				break;
 				case '-':
-					value.f = operand2.f - operand1.f;
+					result = subtraction_1(&arg, clnt);
+					if (result == (float *) NULL) 
+					clnt_perror (clnt, "call failed");
+					value.f = *result;
 				break;
 				case '*':
-					value.f = operand1.f * operand2.f;
+					result = multiplication_1(&arg, clnt);
+					if (result == (float *) NULL) 
+						clnt_perror (clnt, "call failed");
+					value.f = *result;
 				break;
 				case '/':
-					value.f = operand2.f / operand1.f;
+					result = division_1(&arg, clnt);
+					if (result == (float *) NULL)
+						clnt_perror (clnt, "call failed");
+					value.f = *result;
 				break;
 				case '^':
 					//value.f = pow(operand2.f, operand1.f);
@@ -197,11 +221,10 @@ int operator_type( elemento *operator ){
 }
 
 
-
 void arithmetic_prg_1(char *host) {
 	CLIENT *clnt;
-	float  *result_1;
-	operands  addition_1_arg;
+	float  *result;
+	operands  arg;
 	float  *result_2;
 	operands  subtraction_1_arg;
 	float  *result_3;
@@ -217,8 +240,8 @@ void arithmetic_prg_1(char *host) {
 	}
 #endif	/* DEBUG */
 
-	result_1 = addition_1(&addition_1_arg, clnt);
-	if (result_1 == (float *) NULL) {
+	result = addition_1(&arg, clnt);
+	if (result == (float *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 	result_2 = subtraction_1(&subtraction_1_arg, clnt);
