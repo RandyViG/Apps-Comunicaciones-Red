@@ -6,6 +6,7 @@
 
 #include "Arithmetic.h"
 #include "TADPilaDin.h"
+#include <stdlib.h>
 #include <math.h>
 
 void infix( char *notation );
@@ -15,6 +16,7 @@ void infix_to_postfix( char *notation );
 void arithmetic_prg_1(char *host);
 int operator_type( elemento * operator );
 int parentheses( char *notation );
+void add_operator( elemento e , pila * S , elemento *post , int * j , int type );
 
 int main (int argc, char *argv[]){
 	char *host , notation[100];
@@ -38,6 +40,7 @@ int main (int argc, char *argv[]){
 			break;
 		case 3:
 			infix_to_postfix( notation );
+			printf("Conversion correcta: %s\n",notation);
 			postfix( notation , host);
 			break;
 		default:
@@ -51,18 +54,15 @@ void infix_to_postfix( char *notation ){
 	int index = 0 , size, i, type;
 	elemento aux[100], post[100];
 	size = strlen( notation );
-
 	if( parentheses(notation) == 0 ){
 		printf("Error! \nEl numero de parentesis no es correcto\n");
 		exit(1);
 	}
-
 	pila stack;
 	Initialize(&stack);
 
 	for( i = 0; i < size ; i++ )
 		aux[i].c = notation[i];
-
 	for( i = 0 ; i < size ; i++){
 		type = operator_type( &aux[i] );
 		if( type < 5 )
@@ -70,17 +70,12 @@ void infix_to_postfix( char *notation ){
 		else
 			post[index++] = aux[i];
 	}
-
 	while( Empty(&stack) == 0 )
 		post[index++] = Pop( &stack );
-	
 	post[index].c = '\0';
-
 	memset( notation , 0 , 100 );
-
 	for( i=0 ; post[i].c != '\0'; i++)
 		notation[i] = post[i].c;
-	
 	notation[i] = '\0';
 }
 
@@ -113,8 +108,8 @@ void postfix( char *notation , char * host ){
 			Push( &stack , value );
 		}
 		else{
-			operand1 = Pop( &stack );
 			operand2 = Pop( &stack );
+			operand1 = Pop( &stack );
 			arg.operand1 = operand1.f;
 			arg.operand2 = operand2.f;
 			switch( aux.c ){
@@ -279,35 +274,37 @@ int parentheses( char *notation ){
 	return 1;
 }
 
-void add_operator( elemento e , pila * S , elemento post[] , int * j , int type ){
+void add_operator( elemento e , pila * S , elemento *post , int * j , int type ){
+	elemento aux;
+	int aux_type;
 	switch( type ){
 	case 0:
 		Push( S, e );
 		break;
 	case 1:
-		elemento aux;
-		aux = Top(S);
+		aux = Top( S );
 		while( operator_type( &aux ) != 0 ){
-			post[*j] = Pop( S );
-			*j++;
-			aux = Top(S);
+			post[ (*j)++ ] = Pop( S );
+			aux = Top( S );
 		}
-		Pop(S);
+		Pop( S );
 		break;
 	default:
-		elemento aux;
-		aux = Top(S);
-		if( Empty(S) == 1 || type > operator_type( &aux ) )
+		if( Empty(S) == 1 )
 			Push( S , e );
 		else{
-			elemento aux;
-			aux = Top(S);
-			while( Empty(S) == 1 || type  <= operator_type( &aux ) ){
-				post[*j] = Pop( S );
-				*j++;
+			aux = Top( S );
+			aux_type = operator_type( &aux );
+			if( type > aux_type )
+				Push( S , e );
+			else{
 				aux = Top(S);
+				while( type  <= operator_type( &aux ) ){
+					post[ (*j)++ ] = Pop( S );
+					aux = Top(S);
+				}
+				Push( S , e );
 			}
-			Push( S , e );
 		}
 		break;
 	}
