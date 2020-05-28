@@ -36,6 +36,9 @@ extern  float * division_1_svc(operands *, struct svc_req *);
 #define multiplication 4
 extern  float * multiplication_1(operands *, CLIENT *);
 extern  float * multiplication_1_svc(operands *, struct svc_req *);
+#define exponential 5
+extern  float * exponential_1(operands *, CLIENT *);
+extern  float * exponential_1_svc(operands *, struct svc_req *);
 extern int arithmetic_prg_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
@@ -51,6 +54,9 @@ extern  float * division_1_svc();
 #define multiplication 4
 extern  float * multiplication_1();
 extern  float * multiplication_1_svc();
+#define exponential 5
+extern  float * exponential_1();
+extern  float * exponential_1_svc();
 extern int arithmetic_prg_1_freeresult ();
 #endif /* K&R C */
 

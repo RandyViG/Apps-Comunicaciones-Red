@@ -3,7 +3,6 @@
  * These are only templates and you can use them
  * as a guideline for developing your own functions.
  */
-
 #include "Arithmetic.h"
 #include "Trigonometric.h"
 #include "TADPilaDin.h"
@@ -29,7 +28,6 @@ int main (int argc, char *argv[]){
 	}
 	printf("Ingresa la expresión a evaluar:\n");
 	scanf("%s",notation);
-	printf("La notación es: %s\n",notation);
 	printf("Ingresa el tipo de notacion (Postfija = 1 , Prefija = 2 , Infija = 3):\n");
 	scanf("%d",&type);
 	host = argv[1];
@@ -144,7 +142,9 @@ void postfix( char *notation , char * host , char * host2 ){
 					value.f = *result;
 				break;
 				case '^':
-					//value.f = pow(operand2.f, operand1.f);
+					result = exponential_1(&arg, clnt);
+					if (result == (float *) NULL)
+						clnt_perror (clnt, "call failed");
 				break;
 			}
 			Push(&stack,value);
@@ -226,7 +226,9 @@ void prefix( char *notation , char * host , char *host2 ){
 					value.f = *result;
 				break;
 				case '^':
-					//value.f = pow(operand2.f, operand1.f);
+					result = exponential_1(&arg, clnt);
+					if (result == (float *) NULL)
+						clnt_perror (clnt, "call failed");
 				break;
 			}
 			Push(&stack,value);
@@ -380,44 +382,4 @@ float trigonometric( char * operator , elemento operand , char *host){
 	#endif
 
 	return *result;
-}
-
-void arithmetic_prg_1(char *host) {
-	CLIENT *clnt;
-	float  *result;
-	operands  arg;
-	float  *result_2;
-	operands  subtraction_1_arg;
-	float  *result_3;
-	operands  division_1_arg;
-	float  *result_4;
-	operands  multiplication_1_arg;
-
-#ifndef	DEBUG
-	clnt = clnt_create (host, ARITHMETIC_PRG, ARTIHMETIC_VER, "udp");
-	if (clnt == NULL) {
-		clnt_pcreateerror (host);
-		exit (1);
-	}
-#endif	/* DEBUG */
-
-	result = addition_1(&arg, clnt);
-	if (result == (float *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_2 = subtraction_1(&subtraction_1_arg, clnt);
-	if (result_2 == (float *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_3 = division_1(&division_1_arg, clnt);
-	if (result_3 == (float *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_4 = multiplication_1(&multiplication_1_arg, clnt);
-	if (result_4 == (float *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-#ifndef	DEBUG
-	clnt_destroy (clnt);
-#endif	 /* DEBUG */
 }

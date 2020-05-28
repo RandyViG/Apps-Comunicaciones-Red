@@ -24,6 +24,7 @@ arithmetic_prg_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		operands subtraction_1_arg;
 		operands division_1_arg;
 		operands multiplication_1_arg;
+		operands exponential_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -56,6 +57,12 @@ arithmetic_prg_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		_xdr_argument = (xdrproc_t) xdr_operands;
 		_xdr_result = (xdrproc_t) xdr_float;
 		local = (char *(*)(char *, struct svc_req *)) multiplication_1_svc;
+		break;
+
+	case exponential:
+		_xdr_argument = (xdrproc_t) xdr_operands;
+		_xdr_result = (xdrproc_t) xdr_float;
+		local = (char *(*)(char *, struct svc_req *)) exponential_1_svc;
 		break;
 
 	default:
