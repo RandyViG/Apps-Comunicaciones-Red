@@ -1,15 +1,13 @@
 
 program TRIGONOMETRIC_PRG {
 	version TRIGONOMETRIC_VER {
-		float sine ( int operand ) = 1;
-		float cosine ( int operand ) = 2;
-		float tangent ( int operand ) = 3;
-		float cotangent ( int operand ) = 4;
-		float secant ( int operand ) = 5;
-		float cosecant ( int operand ) = 6;
+		float sine ( float operand ) = 1;
+		float cosine ( float operand ) = 2;
+		float tangent ( float operand ) = 3;
+		float cotangent ( float operand ) = 4;
+		float secant ( float operand ) = 5;
+		float cosecant ( float operand ) = 6;
+		float logarithm ( float operand ) = 7;
 	} = 1;
 } = 0x20000002;
 
-#Archlinux -ltirpc
-#Debian -lnsl
-LDLIBS += -ltirpc
