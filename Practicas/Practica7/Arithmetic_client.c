@@ -5,24 +5,26 @@
  */
 
 #include "Arithmetic.h"
+#include "Trigonometric.h"
 #include "TADPilaDin.h"
 #include <stdlib.h>
-#include <math.h>
+#include <string.h>
 
 void infix( char *notation );
-void postfix( char *notation , char*host );
-void prefix( char *notation , char *host );
+void postfix( char *notation , char *host , char *host2 );
+void prefix( char *notation , char *host , char *host2 );
 void infix_to_postfix( char *notation );
 void arithmetic_prg_1(char *host);
 int operator_type( elemento * operator );
 int parentheses( char *notation );
 void add_operator( elemento e , pila * S , elemento *post , int * j , int type );
+float trigonometric( char * operator , elemento operand , char *host);
 
 int main (int argc, char *argv[]){
-	char *host , notation[100];
+	char *host , notation[100] , *host2;
 	int type;
-	if (argc < 2) {
-		printf ("usage: %s server_host\n", argv[0]);
+	if (argc < 3) {
+		printf ("usage: %s server_host_Arithmetic server_host_Trignometric\n", argv[0]);
 		exit (1);
 	}
 	printf("Ingresa la expresión a evaluar:\n");
@@ -31,17 +33,18 @@ int main (int argc, char *argv[]){
 	printf("Ingresa el tipo de notacion (Postfija = 1 , Prefija = 2 , Infija = 3):\n");
 	scanf("%d",&type);
 	host = argv[1];
+	host2 = argv[2];
 	switch( type ){
 		case 1:
-			postfix( notation , host );
+			postfix( notation , host , host2);
 			break;
 		case 2:
-			prefix( notation , host );
+			prefix( notation , host , host2);
 			break;
 		case 3:
 			infix_to_postfix( notation );
 			printf("Conversion correcta: %s\n",notation);
-			postfix( notation , host);
+			postfix( notation , host , host2 );
 			break;
 		default:
 			printf("Tipo de notación invalido!\n");
@@ -79,10 +82,11 @@ void infix_to_postfix( char *notation ){
 	notation[i] = '\0';
 }
 
-void postfix( char *notation , char * host ){
+void postfix( char *notation , char * host , char * host2 ){
 	CLIENT *clnt;
 	float *result;
 	operands arg;
+	char trig[4];
 
 	#ifndef	DEBUG
 		clnt = clnt_create (host, ARITHMETIC_PRG, ARTIHMETIC_VER, "udp");
@@ -100,7 +104,9 @@ void postfix( char *notation , char * host ){
 		aux.c = notation[i];
 		type = operator_type( &aux );
 		if( type == 6 ){
-			//Evaluar trigonometrico
+			sprintf( trig,"%c%c%c\0",notation[i],notation[i+1],notation[i+2] );
+			value.f = trigonometric( trig , Pop(&stack) , host2 );
+			i += 2;
 			Push( &stack , value );
 		}
 		else if( type == 5 ){
@@ -154,14 +160,15 @@ void postfix( char *notation , char * host ){
 	
 	#ifndef	DEBUG
 		clnt_destroy (clnt);
-	#endif	 /* DEBUG */
+	#endif
 }
 
-void prefix( char *notation , char * host ){
+void prefix( char *notation , char * host , char *host2 ){
 
 	CLIENT *clnt;
 	float *result;
 	operands arg;
+	char trig[4];
 
 	#ifndef	DEBUG
 		clnt = clnt_create (host, ARITHMETIC_PRG, ARTIHMETIC_VER, "udp");
@@ -179,7 +186,9 @@ void prefix( char *notation , char * host ){
 		aux.c = notation[i];
 		type = operator_type( &aux );
 		if( type == 6 ){
-			//Evaluar trigonometrico
+			sprintf( trig,"%c%c%c\0", notation[i-2] , notation[i-1] , notation[i] );
+			value.f = trigonometric( trig , Pop(&stack) , host2 );
+			i -= 2;
 			Push( &stack , value );
 		}
 		else if( type == 5 ){
@@ -187,8 +196,8 @@ void prefix( char *notation , char * host ){
 			Push( &stack , value );
 		}
 		else{
-			operand1 = Pop( &stack );
 			operand2 = Pop( &stack );
+			operand1 = Pop( &stack );
 			arg.operand1 = operand1.f;
 			arg.operand2 = operand2.f;
 			switch( aux.c ){
@@ -233,7 +242,7 @@ void prefix( char *notation , char * host ){
 
 int operator_type( elemento *operator ){
 
-	if( operator->c > 64 && operator->c < 91 ) // trygonometric operator
+	if( operator->c > 'a' && operator->c < 'z' ) // trygonometric operator
 		return 6;
 	if( operator->c == '^' ) 
 		return 4;
@@ -308,6 +317,69 @@ void add_operator( elemento e , pila * S , elemento *post , int * j , int type )
 		}
 		break;
 	}
+}
+
+float trigonometric( char * operator , elemento operand , char *host){
+	CLIENT *clnt;
+	#ifndef	DEBUG
+		clnt = clnt_create (host, TRIGONOMETRIC_PRG, TRIGONOMETRIC_VER, "udp");
+		if (clnt == NULL) {
+			clnt_pcreateerror (host);
+			exit (1);
+		}
+	#endif
+
+	float arg = operand.f;
+	float *result,aux;
+
+	if( !strncmp(operator,"sin",3)  ){
+		result = sine_1(&arg, clnt);
+		if( result == (float *) NULL ) {
+			clnt_perror (clnt, "call failed");
+		}
+	}
+	else if( !strncmp(operator,"cos",3) ){
+		result = cosine_1(&arg, clnt);
+		if( result == (float *) NULL ) {
+			clnt_perror (clnt, "call failed");
+		}
+	}
+	else if( !strncmp(operator,"tan",3) ){
+		result = tangent_1(&arg, clnt);
+		if( result == (float *) NULL ) {
+			clnt_perror (clnt, "call failed");
+		}
+	}
+	else if( !strncmp(operator,"cot",3) ){
+		result = cotangent_1(&arg, clnt);
+		if( result == (float *) NULL ) {
+			clnt_perror (clnt, "call failed");
+		}
+
+	}
+	else if( !strncmp(operator,"sec",3) ){
+		result = secant_1(&arg, clnt);
+		if( result == (float *) NULL ) {
+			clnt_perror (clnt, "call failed");
+		}
+	}
+	else if( !strncmp(operator,"csc",3)){
+		result = cosecant_1(&arg, clnt);
+		if (result == (float *) NULL) {
+			clnt_perror (clnt, "call failed");
+		}
+	}
+	else if( !strncmp(operator,"log",3) ){
+		result = logarithm_1(&arg, clnt);
+		if (result == (float *) NULL) {
+			clnt_perror (clnt, "call failed");
+		}
+	}
+	#ifndef	DEBUG
+		clnt_destroy (clnt);
+	#endif
+
+	return *result;
 }
 
 void arithmetic_prg_1(char *host) {

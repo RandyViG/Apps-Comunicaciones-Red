@@ -13,7 +13,7 @@ SOURCES_SVC.h =
 SOURCES.x = Arithmetic.x
 
 TARGETS_SVC.c = Arithmetic_svc.c Arithmetic_server.c Arithmetic_xdr.c
-TARGETS_CLNT.c = Arithmetic_clnt.c Arithmetic_client.c Arithmetic_xdr.c TADPilaDin.c
+TARGETS_CLNT.c = Arithmetic_clnt.c Arithmetic_client.c Arithmetic_xdr.c TADPilaDin.c Trigonometric_clnt.c 
 TARGETS = Arithmetic.h Arithmetic_xdr.c Arithmetic_clnt.c Arithmetic_svc.c Arithmetic_client.c Arithmetic_server.c
 
 OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
