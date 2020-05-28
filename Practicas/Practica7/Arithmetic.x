@@ -9,5 +9,6 @@ program ARITHMETIC_PRG {
 		float subtraction ( operands ) = 2;
 		float division ( operands ) = 3;
 		float multiplication ( operands ) = 4;
+		float exponential ( operands ) = 5;
 	} = 1;
 } = 0x20000001;
