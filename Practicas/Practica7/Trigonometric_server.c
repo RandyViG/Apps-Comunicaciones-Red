@@ -11,7 +11,7 @@
 float * sine_1_svc(float *argp, struct svc_req *rqstp){
 	static float  result;
 	result = sin( *argp );
-	printf("Result: sin( %f ) = %f",*argp,result);
+	printf("Result: sin( %f ) = %f\n",*argp,result);
 
 	return &result;
 }
@@ -19,7 +19,7 @@ float * sine_1_svc(float *argp, struct svc_req *rqstp){
 float * cosine_1_svc(float *argp, struct svc_req *rqstp){
 	static float  result;
 	result = cos( *argp );
-	printf("Result: cos( %f ) = %f",*argp,result);
+	printf("Result: cos( %f ) = %f\n",*argp,result);
 
 	return &result;
 }
@@ -27,7 +27,7 @@ float * cosine_1_svc(float *argp, struct svc_req *rqstp){
 float * tangent_1_svc(float *argp, struct svc_req *rqstp){
 	static float  result;
 	result = tan( *argp );
-	printf("Result: tan( %f ) = %f",*argp,result);
+	printf("Result: tan( %f ) = %f\n",*argp,result);
 
 	return &result;
 }
@@ -35,7 +35,7 @@ float * tangent_1_svc(float *argp, struct svc_req *rqstp){
 float * cotangent_1_svc(float *argp, struct svc_req *rqstp){
 	static float  result;
 	result = 1 / tan(*argp);
-	printf("Result: cot( %f ) = %f",*argp,result);
+	printf("Result: cot( %f ) = %f\n",*argp,result);
 
 	return &result;
 }
@@ -43,7 +43,7 @@ float * cotangent_1_svc(float *argp, struct svc_req *rqstp){
 float * secant_1_svc(float *argp, struct svc_req *rqstp){
 	static float  result;
 	result = 1 / cos( *argp );
-	printf("Result: sec( %f ) = %f",*argp,result);
+	printf("Result: sec( %f ) = %f\n",*argp,result);
 
 	return &result;
 }
@@ -51,7 +51,7 @@ float * secant_1_svc(float *argp, struct svc_req *rqstp){
 float * cosecant_1_svc(float *argp, struct svc_req *rqstp){
 	static float  result;
 	result = 1 / sin( *argp );
-	printf("Result: csc( %f ) = %f",*argp,result);
+	printf("Result: csc( %f ) = %f\n",*argp,result);
 
 	return &result;
 }
@@ -59,7 +59,7 @@ float * cosecant_1_svc(float *argp, struct svc_req *rqstp){
 float * logarithm_1_svc(float *argp, struct svc_req *rqstp){
 	static float  result;
 	result = log( *argp );
-	printf("Result: log( %f ) = %f",*argp,result);
+	printf("Result: log( %f ) = %f\n",*argp,result);
 
 	return &result;
 }
