@@ -5,6 +5,7 @@
  */
 
 #include "Arithmetic.h"
+#include <stdio.h>
 #include "math.h"
 
 float * addition_1_svc(operands *argp, struct svc_req *rqstp){
