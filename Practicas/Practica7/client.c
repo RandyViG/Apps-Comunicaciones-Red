@@ -18,6 +18,7 @@ int operator_type( elemento * operator );
 int parentheses( char *notation );
 void add_operator( elemento e , pila * S , elemento *post , int * j , int type );
 float trigonometric( char * operator , elemento operand , char *host);
+void operators( void );
 
 int main (int argc, char *argv[]){
 	char *host , notation[100] , *host2;
@@ -26,6 +27,7 @@ int main (int argc, char *argv[]){
 		printf ("usage: %s server_host_Arithmetic server_host_Trignometric\n", argv[0]);
 		exit (1);
 	}
+	operators();
 	printf("Ingresa la expresión a evaluar:\n");
 	scanf("%s",notation);
 	printf("Ingresa el tipo de notacion (Postfija = 1 , Prefija = 2 , Infija = 3):\n");
@@ -51,6 +53,16 @@ int main (int argc, char *argv[]){
 	exit (0);
 }
 
+void operators( void ){
+	printf("\t\t     Operadores           \n");
+	printf("\t  suma: +               seno: sin        \n");
+	printf("\t  resta: -              coseno: cos      \n");
+	printf("\t  Multiplicación: *     tangente: tan    \n");
+	printf("\t  División: /           cotangente: ctg   \n");
+	printf("\t  Exponencial: ^        secante: sec\n");
+	printf("\t  Logaritmo: log        cosecante: csc\n\n");
+}
+
 void infix_to_postfix( char *notation ){
 	int index = 0 , size, i, type;
 	elemento aux[100], post[100];
@@ -66,7 +78,13 @@ void infix_to_postfix( char *notation ){
 		aux[i].c = notation[i];
 	for( i = 0 ; i < size ; i++){
 		type = operator_type( &aux[i] );
-		if( type < 5 )
+		if( type == 6 ){
+			Push( &stack , aux[i+2] );
+			Push( &stack , aux[i+1] );
+			Push( &stack , aux[i] );
+			i+=2;
+		} 
+		else if( type < 5 )
 			add_operator( aux[i] , &stack , post , &index , type );
 		else
 			post[index++] = aux[i];
@@ -145,13 +163,14 @@ void postfix( char *notation , char * host , char * host2 ){
 					result = exponential_1(&arg, clnt);
 					if (result == (float *) NULL)
 						clnt_perror (clnt, "call failed");
+					value.f = *result;
 				break;
 			}
 			Push(&stack,value);
 		}
 	}
 	if( Size(&stack) > 1 ){
-		printf("Error!\nLa expresión tenia un error");
+		printf("Error!\nLa expresión tenia un error\n");
 		exit(-1);
 	}
 
@@ -229,13 +248,14 @@ void prefix( char *notation , char * host , char *host2 ){
 					result = exponential_1(&arg, clnt);
 					if (result == (float *) NULL)
 						clnt_perror (clnt, "call failed");
+					value.f = *result;
 				break;
 			}
 			Push(&stack,value);
 		}
 	}
 	if( Size(&stack) > 1 ){
-		printf("Error!\nLa expresión tenia un error");
+		printf("Error!\nLa expresión tenia un error\n");
 		exit(-1);
 	}
 	value = Pop( &stack );
@@ -289,35 +309,37 @@ void add_operator( elemento e , pila * S , elemento *post , int * j , int type )
 	elemento aux;
 	int aux_type;
 	switch( type ){
-	case 0:
-		Push( S, e );
-		break;
-	case 1:
-		aux = Top( S );
-		while( operator_type( &aux ) != 0 ){
-			post[ (*j)++ ] = Pop( S );
+		case 0:
+			Push( S, e );
+			break;
+		case 1:
 			aux = Top( S );
-		}
-		Pop( S );
-		break;
-	default:
-		if( Empty(S) == 1 )
-			Push( S , e );
-		else{
-			aux = Top( S );
-			aux_type = operator_type( &aux );
-			if( type > aux_type )
+			while( operator_type( &aux ) != 0 ){
+				post[ (*j)++ ] = Pop( S );
+				aux = Top( S );
+			}
+			Pop( S );
+			break;
+		default:
+			if( Empty(S) )
 				Push( S , e );
 			else{
-				aux = Top(S);
-				while( type  <= operator_type( &aux ) ){
-					post[ (*j)++ ] = Pop( S );
-					aux = Top(S);
+				aux = Top( S );
+				aux_type = operator_type( &aux );
+				if( type > aux_type )
+					Push( S , e );
+				else{
+					//aux = Top(S);
+					while( type  <= operator_type( &aux ) ){
+						post[ (*j)++ ] = Pop( S );
+						if( Empty( S ) )
+							break;
+						aux = Top(S);
+					}
+					Push( S , e );
 				}
-				Push( S , e );
 			}
-		}
-		break;
+			break;
 	}
 }
 
