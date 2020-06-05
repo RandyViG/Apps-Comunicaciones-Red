@@ -1,25 +1,13 @@
-# Aplicaciones para Comunicaciones en Redes 
+# Aplicaciones para Comunicaciones en Red 
 ## Escuela Superior de Cómputo|Escom 
 *Profesor: Axel Ernesto Moreno Cervantes*
 
 # Practicas
-1. Drive 
-
-# Ejercicios de Sockets Bloqueantes
-1. Sockets en c
-- Flujo
-  + Archivos
-  + Eco
-  + Estructura
-- Datagrama
-  + Estructura
-2. Sockets en java
-- Flujo
-  + HolaMundo
-  + Archivos
-  + Eco
-  + Objetos
-- Datagrama
-  + Hola Mundo
-  + Eco
-  + Archivos
+1. Drive
+2. Carrito de Compras
+3. Chat
+4. Servidor HTTP
+5. Bucketsort
+6. Servidor HTTP sockets No-bloqueantes
+7. Calculadora Distribuida
+8. Aplicación Distribuida para descargar de Archivos
