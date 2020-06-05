@@ -2,7 +2,7 @@
 ## Escuela Superior de Cómputo|Escom 
 *Profesor: Axel Ernesto Moreno Cervantes*
 
-# Practicas
+# Prácticas
 1. Drive
 2. Carrito de Compras
 3. Chat
